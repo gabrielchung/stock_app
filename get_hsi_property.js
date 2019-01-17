@@ -4,18 +4,31 @@ const eol = require('os').EOL;
 
 
 const hsi_property_list = fs.readFileSync('hsi_property.txt', 'utf8');
-// const stock_array = hsi_property_list.split(eol);
-const stock_array = ['0016', '1997']
+const stock_array = hsi_property_list.split(eol);
 
 var time_delay = 0; 
 stock_array.forEach(curr_stock_code => {
-    setTimeout(get_stock_data, time_delay, curr_stock_code);
-    time_delay += 10000;
+
+    const hk_stock_code = curr_stock_code + '.HK';
+    console.log(hk_stock_code);
+
+    const filename = 'hsi_property_' + curr_stock_code + '.txt';
+
+    if (fs.existsSync(filename)) {
+        const file_content = fs.readFileSync(filename, 'utf8');
+        if (file_content.length !== 0) {
+            console.log(hk_stock_code + ': File with data already exists. Skip asking quote again.');
+            return; //continue in the loop
+        }
+    }
+
+    setTimeout(get_stock_data, time_delay, hk_stock_code, filename);
+    time_delay += 20000;
 });
 
-function get_stock_data(stock_code) {
-    const hk_stock_code = stock_code + '.HK';
-    console.log(hk_stock_code);
-    const output = cp.execSync('node get_daily.js ' + hk_stock_code);
-    fs.writeFileSync('hsi_property_' + stock_code + '.txt', output);
+function get_stock_data(stock_code, filename) {
+    console.log(stock_code + ': Working ...')
+    const output = cp.execSync('node get_daily.js ' + stock_code);
+    fs.writeFileSync(filename, output);
+    console.log(stock_code + ': Complete')
 }

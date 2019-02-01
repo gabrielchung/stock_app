@@ -101,8 +101,10 @@ const period_start_end_diff_obj = {
 console.log(
             JSON.stringify(
               {
-                stock_code: stock_code
+                 stock_code: stock_code
                 ,period_start_end_diff: period_start_end_diff_obj
+                ,period_start_date: period_start_date
+                ,period_end_date: period_end_date
               }
             )
               );
